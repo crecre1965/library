@@ -1,6 +1,7 @@
-package fr.training.spring.library;
+package fr.training.spring.library.application;
 
-import org.springframework.web.bind.annotation.*;
+import fr.training.spring.library.domain.library.Type;
+import fr.training.spring.library.domain.library.Library;
 
 import java.util.List;
 

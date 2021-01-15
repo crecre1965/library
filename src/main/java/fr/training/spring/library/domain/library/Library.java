@@ -1,23 +1,21 @@
-package fr.training.spring.library;
+package fr.training.spring.library.domain.library;
 
-import javax.persistence.*;
+import fr.training.spring.library.domain.book.Book;
 
-@Entity
+
+
+import java.util.List;
+
 public class Library {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LIBRARY_ID")
     private long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "LIBRARY_TYPE")
     private Type type;
 
-    @Embedded
     private Address address;
 
-    @Embedded
     private Director director;
+
+    private List<Book> books;
 
     public Library() {
     }
@@ -54,10 +52,19 @@ public class Library {
         this.director = director;
     }
 
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
+
     public void update(Library libraryToUpdate) {
-        address= libraryToUpdate.getAddress();
-        director= libraryToUpdate.getDirector();
-        type=libraryToUpdate.getType();
+        address = libraryToUpdate.getAddress();
+        director = libraryToUpdate.getDirector();
+        type = libraryToUpdate.getType();
     }
 
     public Library(long id, Type type, Address address, Director director) {
@@ -65,5 +72,20 @@ public class Library {
         this.type = type;
         this.address = address;
         this.director = director;
+    }
+
+    public Library(long id, Type type, Address address, Director director, List<Book> books) {
+        this.id = id;
+        this.type = type;
+        this.address = address;
+        this.director = director;
+        this.books = books;
+    }
+
+    public Library(Type type, Address address, Director director, List<Book> books) {
+        this.type = type;
+        this.address = address;
+        this.director = director;
+        this.books = books;
     }
 }

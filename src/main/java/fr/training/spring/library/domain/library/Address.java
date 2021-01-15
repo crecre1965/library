@@ -1,23 +1,15 @@
-package fr.training.spring.library;
+package fr.training.spring.library.domain.library;
 
 
 
-import javax.persistence.*;
-
-@Embeddable
 public class Address {
 
-//    private long id;
-@Column(name = "ADDRESS_NUMBER")
     private int number;
 
-    @Column(name = "ADDRESS_STREET")
     private String street;
 
-    @Column(name = "ADDRESS_ZIPCODE")
     private int zipcode;
 
-    @Column(name = "ADDRESS_CITY")
     private String city;
 
     public Address() {
