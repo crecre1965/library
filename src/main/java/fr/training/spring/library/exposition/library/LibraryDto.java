@@ -1,11 +1,13 @@
 package fr.training.spring.library.exposition.library;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.training.spring.library.domain.exception.ErrorCodes;
 import fr.training.spring.library.domain.library.Type;
 import fr.training.spring.library.exposition.address.AddressDto;
 import fr.training.spring.library.exposition.book.BookDto;
 import fr.training.spring.library.exposition.director.DirectorDto;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class LibraryDto {
@@ -19,6 +21,7 @@ public class LibraryDto {
     private AddressDto address;
 
     @JsonProperty("directeur de la bibliothèque / library director ")
+    @NotNull(message = ErrorCodes.DIRECTOR_IS_MISSING)
     private DirectorDto director;
 
     @JsonProperty("livres de la bliothèque / library books ")
@@ -28,6 +31,13 @@ public class LibraryDto {
         }
 
     public LibraryDto(long id, Type type, AddressDto address, DirectorDto director, List<BookDto> books) {
+        this.id = id;
+        this.type = type;
+        this.address = address;
+        this.director = director;
+        this.books = books;
+    }
+    public LibraryDto(Type type, AddressDto address, DirectorDto director, List<BookDto> books) {
         this.id = id;
         this.type = type;
         this.address = address;
@@ -58,6 +68,7 @@ public class LibraryDto {
     public void setAddress(AddressDto address) {
         this.address = address;
     }
+
 
     public DirectorDto getDirector() {
         return director;

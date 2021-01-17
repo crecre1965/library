@@ -13,6 +13,7 @@ import fr.training.spring.library.exposition.director.DirectorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Component
@@ -41,7 +42,7 @@ AddressAdapter addressAdapter;
 
 
     @Override
-    public Library mapToEntity(LibraryDto dto) {
+    public Library mapToEntity(@Valid LibraryDto dto) {
         final Library library = new Library();
         library.setAddress(addressAdapter.mapToEntity(dto.getAddress()));
         library.setDirector(directorAdapter.mapToEntity(dto.getDirector()));

@@ -7,6 +7,7 @@
 
     import fr.training.spring.library.domain.exception.ErrorCodes;
     import fr.training.spring.library.domain.library.Library;
+    import fr.training.spring.library.domain.library.Type;
     import fr.training.spring.library.exposition.address.AddressDto;
     import fr.training.spring.library.exposition.book.BookDto;
     import fr.training.spring.library.exposition.director.DirectorDto;
@@ -156,30 +157,114 @@
                 final Long idOfCreatedLibrary = dummyLibrary.getId();
 
                 // --------------- When ---------------
-                restTemplate.put("/api/library/modifier" + idOfCreatedLibrary, SCHOOL_LIBRARY_PARIS);
+                final LibraryDto schoolLibraryParisDTO = new LibraryDto(SCHOOL_LIBRARY_PARIS.getType()
+                        , new AddressDto(
+                        SCHOOL_LIBRARY_PARIS.getAddress().getNumber(), SCHOOL_LIBRARY_PARIS.getAddress().getStreet(),
+                        SCHOOL_LIBRARY_PARIS.getAddress().getZipcode(), SCHOOL_LIBRARY_PARIS.getAddress().getCity()),
+                        new DirectorDto(SCHOOL_LIBRARY_PARIS.getDirector().getLastname(),
+                                SCHOOL_LIBRARY_PARIS.getDirector().getFirstname()),
+                        SCHOOL_LIBRARY_PARIS
+                                .getBooks().stream().map(book -> new BookDto(book.getIsbn(), book.getTitle(),
+                                book.getAuthor(), book.getNumberOfPages(), book.getGenre()))
+                                .collect(Collectors.toList()));
+                restTemplate.put("/api/library/modifier/" + idOfCreatedLibrary, schoolLibraryParisDTO);
 
                 // --------------- Then ---------------
+
+
                 final Optional<LibraryJpa> libraryFromDB = libraryDAO.findById(idOfCreatedLibrary);
                 assertThat(libraryFromDB).isNotEmpty();
 
                 // TODO : Check equality
                 assertThat(libraryFromDB.get().getType()).isEqualTo(SCHOOL_LIBRARY_PARIS.getType());
             }
-
             @Test
             @DisplayName(" should send an error when passing on an incorrect ID NE FONCTIONNE PAS !!!!!!!!!!!!!!!!!!!")
             void test_update_2() {
                 // --------------- Given ---------------
                 // Test data
-
                 // --------------- When ---------------
-                final ResponseEntity<String> response = restTemplate.exchange("/api/library/modifier" + Long.MAX_VALUE,
-                        HttpMethod.PUT, new HttpEntity<>(SCHOOL_LIBRARY_PARIS), String.class);
+                final LibraryDto schoolLibraryParisDTO = new LibraryDto(SCHOOL_LIBRARY_PARIS.getType()
+                        , new AddressDto(
+                        SCHOOL_LIBRARY_PARIS.getAddress().getNumber(), SCHOOL_LIBRARY_PARIS.getAddress().getStreet(),
+                        SCHOOL_LIBRARY_PARIS.getAddress().getZipcode(), SCHOOL_LIBRARY_PARIS.getAddress().getCity()),
+                        new DirectorDto(SCHOOL_LIBRARY_PARIS.getDirector().getLastname(),
+                                SCHOOL_LIBRARY_PARIS.getDirector().getFirstname()),
+                        SCHOOL_LIBRARY_PARIS
+                                .getBooks().stream().map(book -> new BookDto(book.getIsbn(), book.getTitle(),
+                                book.getAuthor(), book.getNumberOfPages(), book.getGenre()))
+                                .collect(Collectors.toList()));
+
+
+                final ResponseEntity<String> response = restTemplate.exchange("/api/library/modifier/" + Long.MAX_VALUE,
+                        HttpMethod.PUT, new HttpEntity<>(schoolLibraryParisDTO), String.class);
 
                 // --------------- Then ---------------
                 assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
                 assertThat(response.getBody()).contains(ErrorCodes.LIBRARY_NOT_FOUND);
             }
         }
+        @Nested
+        @DisplayName("Api/library/supprimer")
+        class Test_delete {
+            @Test
+            @DisplayName(" should delete the library when passing on a correct ID")
+            void test_delete_1() {
+                // --------------- Given ---------------
+                final LibraryJpa librarySaved = databaseTestHelper.createDummyLibrary();
+                final Long idOfSavedLibrary = librarySaved.getId();
 
+                // --------------- When ---------------
+                restTemplate.delete("/api/library/supprimer/" + idOfSavedLibrary);
+
+                // --------------- Then ---------------
+                final Optional<LibraryJpa> libraryFromDB = libraryDAO.findById(idOfSavedLibrary);
+                assertThat(libraryFromDB).isEmpty();
+            }
+
+            @Test
+            @DisplayName(" should send an error when passing on an incorrect ID")
+            void test_delete_2() {
+                // --------------- Given ---------------
+                // Test data
+
+                // --------------- When ---------------
+                final ResponseEntity<String> response = restTemplate.exchange("/api/library/supprimer/" + Long.MAX_VALUE,
+                        HttpMethod.DELETE, null, String.class);
+
+                // --------------- Then ---------------
+                assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+                assertThat(response.getBody()).contains(ErrorCodes.LIBRARY_NOT_FOUND);
+            }
+        }
+        @Test
+        @DisplayName("Api GET:/libraries/type/{type} should return all NATIONAL libraries when passing NATIONAL as parameter")
+        void test_list_with_filter_1() {
+            // --------------- Given ---------------
+            // Test data
+
+            // --------------- When ---------------
+            final ResponseEntity<LibraryDto[]> response = restTemplate.getForEntity("/api/library/lister-by-type/" + Type.NATIONALE,
+                    LibraryDto[].class);
+
+            // --------------- Then ---------------
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).hasSize(2).allMatch(library -> library.getType().equals(Type.NATIONALE));
+        }
+
+        @Test
+        @DisplayName("Api GET:/libraries/director/surname/{surname} should get all libraries ruled by Garfield when passing Garfield as parameter")
+        void test_list_with_filter_2() {
+            // --------------- Given ---------------
+            // Test data
+
+            // --------------- When ---------------
+            final ResponseEntity<LibraryDto[]> response = restTemplate
+                    .getForEntity("/api/library/lister-by-firstname/" + "Garfield", LibraryDto[].class);
+
+            // --------------- Then ---------------
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).hasSize(3).allMatch(library -> library.getDirector().getFirstname().equals("Garfield"));
+
+        }
     }
