@@ -1,12 +1,15 @@
 package fr.training.spring.library.exposition.library;
 
+import fr.training.spring.library.domain.book.Genre;
 import fr.training.spring.library.domain.library.Type;
 import fr.training.spring.library.application.LibraryService;
 import fr.training.spring.library.domain.library.Library;
+import fr.training.spring.library.exposition.book.BookReferenceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +24,7 @@ public class LibraryController {
 
     @PostMapping("/creer")
     @ResponseStatus(HttpStatus.CREATED)
-    public LibraryDto creer(@RequestBody final LibraryDto libraryDto) {
+    public LibraryDto creer(@Valid @RequestBody final LibraryDto libraryDto) {
         final Library library = libraryAdapter.mapToEntity(libraryDto);
         return libraryAdapter.mapToDto(libraryService.create(library));
 
@@ -68,8 +71,14 @@ public class LibraryController {
         return libraryAdapter.mapToDto(libraryService.update(id, library));
     }
 
+    @PostMapping("/ajout-livre/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addBookToLibrary(@PathVariable long id, @RequestBody BookReferenceDto bookReference) {
+         libraryAdapter.mapToDto(libraryService.addBook(id, bookReference.isbn, bookReference.genre));
+    }
+
     @DeleteMapping("/supprimer/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public LibraryDto supprimer(@PathVariable final long id) {
         return libraryAdapter.mapToDto(libraryService.delete(id));
     }

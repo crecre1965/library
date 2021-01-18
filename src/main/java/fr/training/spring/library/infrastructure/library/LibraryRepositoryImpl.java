@@ -1,18 +1,17 @@
 package fr.training.spring.library.infrastructure.library;
 
-import fr.training.spring.library.domain.book.Book;
+import fr.training.spring.library.domain.ddd.DDD;
 import fr.training.spring.library.domain.exception.ErrorCodes;
 import fr.training.spring.library.domain.exception.NotFoundException;
 import fr.training.spring.library.domain.library.*;
 
-import fr.training.spring.library.infrastructure.book.BookJpa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@DDD.RepositoryImpl
 @Repository
 public class LibraryRepositoryImpl implements LibraryRepository {
 

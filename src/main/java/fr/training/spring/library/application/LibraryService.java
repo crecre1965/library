@@ -1,5 +1,6 @@
 package fr.training.spring.library.application;
 
+import fr.training.spring.library.domain.book.Genre;
 import fr.training.spring.library.domain.library.Type;
 import fr.training.spring.library.domain.library.Library;
 
@@ -13,6 +14,7 @@ public interface LibraryService {
     public List<Library> searchAllLibraries(String firstname);
     public List<Library> searchAllLibraries(Type type);
     public Library delete(long id);
+    public Library addBook(long id, String isbn, Genre genre);
     }
 
 

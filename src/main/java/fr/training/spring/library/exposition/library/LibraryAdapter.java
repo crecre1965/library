@@ -42,8 +42,13 @@ AddressAdapter addressAdapter;
 
 
     @Override
-    public Library mapToEntity(@Valid LibraryDto dto) {
+    public Library mapToEntity(LibraryDto dto) {
         final Library library = new Library();
+        System.out.println(" ");
+        System.out.println(" ");
+        System.out.println("    libraryAdapter - map to entity");
+        System.out.println(" ");
+        System.out.println(" ");
         library.setAddress(addressAdapter.mapToEntity(dto.getAddress()));
         library.setDirector(directorAdapter.mapToEntity(dto.getDirector()));
         library.setId(dto.getId());

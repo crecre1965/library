@@ -1,7 +1,11 @@
 package fr.training.spring.library.domain.book;
 
 
+import fr.training.spring.library.domain.ddd.DDD;
 
+import java.util.Objects;
+
+@DDD.Entity
 public class Book {
 
     private long id;
@@ -83,5 +87,21 @@ public class Book {
         this.author = author;
         this.numberOfPages = numberOfPages;
         this.genre = genre;
+    }
+    public void assignGenre(Genre genre){
+        this.genre = genre;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id == book.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -1,11 +1,13 @@
 package fr.training.spring.library.domain.library;
 
 import fr.training.spring.library.domain.book.Book;
-
+import fr.training.spring.library.domain.ddd.DDD;
 
 
 import java.util.List;
+import java.util.Objects;
 
+@DDD.Entity
 public class Library {
     private long id;
 
@@ -65,6 +67,7 @@ public class Library {
         address = libraryToUpdate.getAddress();
         director = libraryToUpdate.getDirector();
         type = libraryToUpdate.getType();
+        validate();
     }
 
     public Library(long id, Type type, Address address, Director director) {
@@ -80,6 +83,7 @@ public class Library {
         this.address = address;
         this.director = director;
         this.books = books;
+        validate();
     }
 
     public Library(Type type, Address address, Director director, List<Book> books) {
@@ -87,5 +91,23 @@ public class Library {
         this.address = address;
         this.director = director;
         this.books = books;
+        validate();
+    }
+
+    private void validate(){
+        director.validate();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Library other = (Library) o;
+        return Objects.equals(this.getId(),other.getId() );
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

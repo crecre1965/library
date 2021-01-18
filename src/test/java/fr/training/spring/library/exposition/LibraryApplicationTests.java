@@ -147,7 +147,7 @@
         }
 
         @Nested
-        @DisplayName("Api /api/library/modifier NE FONCTIONNE PAS !!!!!!!!!!!!!!!!!!!")
+        @DisplayName("Api /api/library/modifier ")
         class Test_update {
             @Test
             @DisplayName(" should update the library when passing on a correct ID")
@@ -179,7 +179,7 @@
                 assertThat(libraryFromDB.get().getType()).isEqualTo(SCHOOL_LIBRARY_PARIS.getType());
             }
             @Test
-            @DisplayName(" should send an error when passing on an incorrect ID NE FONCTIONNE PAS !!!!!!!!!!!!!!!!!!!")
+            @DisplayName(" should send an error when passing on an incorrect ")
             void test_update_2() {
                 // --------------- Given ---------------
                 // Test data

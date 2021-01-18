@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class LibraryDto {
-   @JsonProperty("identifiant de la bibliothèque / library id ")
+    @JsonProperty("identifiant de la bibliothèque / library id ")
     private long id;
 
     @JsonProperty("type de bibliothèque / library type ")
@@ -28,7 +28,7 @@ public class LibraryDto {
     private List<BookDto> books;
 
     public LibraryDto() {
-        }
+    }
 
     public LibraryDto(long id, Type type, AddressDto address, DirectorDto director, List<BookDto> books) {
         this.id = id;
@@ -37,6 +37,7 @@ public class LibraryDto {
         this.director = director;
         this.books = books;
     }
+
     public LibraryDto(Type type, AddressDto address, DirectorDto director, List<BookDto> books) {
         this.id = id;
         this.type = type;

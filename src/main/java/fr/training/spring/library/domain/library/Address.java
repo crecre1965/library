@@ -1,7 +1,11 @@
 package fr.training.spring.library.domain.library;
 
 
+import fr.training.spring.library.domain.ddd.DDD;
 
+import java.util.Objects;
+
+@DDD.ValueObject
 public class Address {
 
     private int number;
@@ -61,5 +65,18 @@ public class Address {
         this.street = street;
         this.zipcode = zipcode;
         this.city = city;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return number == address.number && zipcode == address.zipcode && street.equals(address.street) && city.equals(address.city);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, street, zipcode, city);
     }
 }
