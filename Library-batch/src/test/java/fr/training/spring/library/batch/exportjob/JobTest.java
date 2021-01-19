@@ -1,10 +1,10 @@
-package fr.training.spring.library.batch.job;
+package fr.training.spring.library.batch.exportjob;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import fr.training.spring.library.batch.LibraryBatchApplication;
+import fr.training.spring.library.LibraryBatchApplication;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
