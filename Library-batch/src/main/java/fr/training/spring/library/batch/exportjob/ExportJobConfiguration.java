@@ -1,11 +1,7 @@
 package fr.training.spring.library.batch.exportjob;
 
 import fr.training.spring.library.batch.common.FullReportListener;
-import fr.training.spring.library.batch.exportjob.dto.AddressDto;
-import fr.training.spring.library.batch.exportjob.dto.BookDto;
-import fr.training.spring.library.batch.exportjob.dto.DirectorDto;
 import fr.training.spring.library.batch.exportjob.dto.LibraryDto;
-import fr.training.spring.library.domain.library.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -15,11 +11,13 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.file.FlatFileHeaderCallback;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
+import org.springframework.batch.item.json.JacksonJsonObjectMarshaller;
+import org.springframework.batch.item.json.JsonFileItemWriter;
+import org.springframework.batch.item.json.builder.JsonFileItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +28,6 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
 
 @Configuration
 public class ExportJobConfiguration {
@@ -50,20 +47,30 @@ public class ExportJobConfiguration {
     private DataSource dataSource;
 
     @Bean(name = "exportJob1")
-    public Job exportJob(final Step exportStep) {
+    public Job exportJob(final Step exportStepCsv, final Step exportStepJson) {
         return jobBuilderFactory.get("export-job1") //
                 .incrementer(new RunIdIncrementer()) // job can be launched as many times as desired
-                .start(exportStep) //
+                .start(exportStepCsv) //
+                .next(exportStepJson)
                 .listener(jobListener) //
                 .build();
     }
 
     @Bean
-    public Step exportStep(final FlatFileItemWriter<LibraryDto> exportWriter, final LibraryProcessor libraryProcessor) {
-        return stepBuilderFactory.get("export-step").<Long, LibraryDto>chunk(10) //
+    public Step exportStepJson(final JsonFileItemWriter<LibraryDto> exportWriterJson, final LibraryProcessor libraryProcessor) {
+        return stepBuilderFactory.get("export-stepJson").<Long, LibraryDto>chunk(10) //
                 .reader(exportReader())  //
                 .processor(libraryProcessor) //
-                .writer(exportWriter) //
+                .writer(exportWriterJson) //
+                .build();
+    }
+
+    @Bean
+    public Step exportStepCsv(final FlatFileItemWriter<LibraryDto> exportWriterCsv, final LibraryProcessor libraryProcessor) {
+        return stepBuilderFactory.get("export-stepCsv").<Long, LibraryDto>chunk(10) //
+                .reader(exportReader())  //
+                .processor(libraryProcessor) //
+                .writer(exportWriterCsv) //
                 .build();
     }
 
@@ -89,8 +96,8 @@ public class ExportJobConfiguration {
 
     @Bean
     @StepScope
-    public FlatFileItemWriter<LibraryDto> exportWriter(
-            @Value("#{jobParameters['output-file']}") final String outputFile) {
+    public FlatFileItemWriter<LibraryDto> exportWriterCsv(
+            @Value("#{jobParameters['output-file-csv']}") final String outputFile) {
         final FlatFileItemWriter<LibraryDto> writer = new FlatFileItemWriter<>();
         writer.setResource(new FileSystemResource(outputFile));
 
@@ -109,6 +116,25 @@ public class ExportJobConfiguration {
             }
         });
         return writer;
+    }
+
+    /**
+     * ItemWriter is the output of a Step. The writer writes one batch or chunk of
+     * items at a time to the target system. ItemWriter has no knowledge of the
+     * input it will receive next, only the item that was passed in its current
+     * invocation.
+     * @return
+     */
+
+    @Bean
+    @StepScope
+    public JsonFileItemWriter<LibraryDto> exportWriterJson(
+            @Value("#{jobParameters['output-file-json']}") final String outputFile) {
+        return new JsonFileItemWriterBuilder<LibraryDto>() //
+                .jsonObjectMarshaller(new JacksonJsonObjectMarshaller<>()) //
+                .resource(new FileSystemResource(outputFile)) //
+                .name("LibraryJsonFileItemWriter") //
+                .build();
     }
 
 }

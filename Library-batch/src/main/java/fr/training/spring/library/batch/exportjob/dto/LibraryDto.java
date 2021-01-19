@@ -1,20 +1,28 @@
 package fr.training.spring.library.batch.exportjob.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.training.spring.library.domain.library.Type;
 
 import java.util.List;
 
 public class LibraryDto {
+
+    @JsonProperty
     private long id;
 
+    @JsonProperty
     private Type type;
 
+    @JsonProperty
     private AddressDto address;
 
+    @JsonProperty
     private DirectorDto director;
 
+    @JsonProperty("Books")
     private List<BookDto> books;
+
 
     public long getId() {
         return id;

@@ -45,7 +45,7 @@ public class LibraryProcessor implements ItemProcessor<Long, LibraryDto> {
         directorDto.setLastname(library.getDirector().getLastname());
         directorDto.setFirstname(library.getDirector().getFirstname());
 
-        List<BookDto> bookDtos = new ArrayList<>();
+List<BookDto> bookDtos=new ArrayList<>();
         List<Book> books = new ArrayList<>();
         books = library.getBooks();
 
@@ -58,6 +58,7 @@ public class LibraryProcessor implements ItemProcessor<Long, LibraryDto> {
             bookDto.setTitle(book.getTitle());
             bookDto.setNumberOfPages(book.getNumberOfPages());
             bookDtos.add(bookDto);
+
         }
 
         libraryDto.setDirector(directorDto);
@@ -65,6 +66,7 @@ public class LibraryProcessor implements ItemProcessor<Long, LibraryDto> {
         libraryDto.setId((library.getId()));
         libraryDto.setType(library.getType());
         libraryDto.setBooks(bookDtos);
+
 
         return libraryDto;
     }
